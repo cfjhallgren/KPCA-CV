@@ -26,7 +26,7 @@ rcParams['xtick.labelsize'] = 12
 rcParams['ytick.labelsize'] = 12
 
 
-def main(dataset='yeast'):
+def main(dataset='segmentation'):
     """
     Run experiments for determining the number of principal components to
     retain in kernel PCA through cross-validation.
@@ -40,7 +40,7 @@ def main(dataset='yeast'):
 
     """
 
-    if not dataset in ('magic', 'yeast'):
+    if not dataset in ('magic', 'yeast', 'cardiotocography', 'segmentation'):
         raise ValueError("Unknown dataset.")
 
     X = getattr(data, "get_" + dataset + "_data")()
@@ -57,7 +57,6 @@ def kpca_cv_experiment(X, kernel, dataset):
     """
 
     """
-    # TODO move actual PCA calcs to separate file
 
     print("\nCross-validation of kernel PCA\n------------------------------")
 
