@@ -33,3 +33,28 @@ def get_yeast_data():
 
     return data
 
+def get_cardiotocography_data():
+    """
+    """
+    f = open("../data/cardiotocography")
+    data = []
+    for line in f.readlines():
+        line = line.split('\n')[0]
+        line = line.split('\t')[3:] # keep numeric data
+        data.append(line)
+    data = np.asarray(data, dtype=np.float64)
+
+    return data
+
+def get_segmentation_data():
+    """
+    """
+    f = open("../data/segmentation")
+    data = []
+    for line in f.readlines():
+        line = line.split(' ')
+        data.append(line)
+    data = np.asarray(data, dtype=np.float64)
+
+    return data
+
