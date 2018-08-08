@@ -18,7 +18,7 @@ Running
 
 To run the experiments, do from this folder
 
-    cd inkpca
+    cd KPCA-CV
     python experiments.py
 
 Tested on Ubuntu 16.04
