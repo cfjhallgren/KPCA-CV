@@ -74,7 +74,7 @@ def kpca_cv_experiment(X, kernel, dataset, n_iter, kernel_label):
 
     err_mean = errs.mean(0)
     title = dataset + " " + kernel_label
-    plotting(np.arange(n_iter)+1, err_mean, title, "k", "Mean error")
+    plotting(np.arange(n_iter-1)+1, err_mean, title, "k", "Mean error")
 
 
 def plotting(x, y, title, xlabel, ylabel):
