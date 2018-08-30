@@ -6,7 +6,7 @@ from __future__ import division, print_function
 import numpy as np
 
 
-def kpca_cv(K):
+def kpca_cv(K, n_iter):
     """
     Select the number of principal components to retain in kernel PCA through
     cross-validation. Calculate the MPRESS statistic for each number of
@@ -25,8 +25,7 @@ def kpca_cv(K):
 
     """
     n = K.shape[0]
-    errs = np.zeros((n, n))
-    K = K / (n-1)
+    errs = np.zeros((n, n_iter))
 
     for i in range(n): # loop over data points
 
@@ -37,17 +36,17 @@ def kpca_cv(K):
         L, U = np.linalg.eigh(K_i)
         L = L[::-1]
         U = U[:,::-1]
-
-        for k in range(n): # loop over PCs
+        for k in range(n_iter): # loop over PCs
+            Lk = np.diag(1/L[:k+1])
             Uk = U[:,:k+1]
-            UUk = Uk.dot(Uk.T)
+            UUk = Uk.dot(Lk.dot(Uk.T))
             UKU = UUk.dot(K_i.dot(UUk))
             f1 = kx.T.dot(UUk.dot(kx))
             f2 = kx.T.dot(UKU.dot(kx))
             err = K_ii - 2*f1 + f2
             errs[i,k] = err
 
-    div = 1/((n - np.arange(n))*n)
+    div = 1/((n - np.arange(n_iter))*n)
     MPRESS = errs.sum(0) * div
     pc = np.argmin(MPRESS)+1
 

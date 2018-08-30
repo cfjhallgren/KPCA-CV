@@ -14,6 +14,13 @@ def rbf(x, y, sigma=100):
     """
     return np.exp(-(np.sum((x-y)**2))/(sigma**2))
 
+def poly(x, y, d=5, R=1):
+    """
+    Polynomial kernel
+
+    """
+    return (np.sum(x*y) + R)**d
+
 def median_distance(X):
     """
     Median distance between pairs of a subset of data examples

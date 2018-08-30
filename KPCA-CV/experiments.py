@@ -5,7 +5,7 @@ from __future__ import division, print_function
 
 # This package
 import data
-from kernels import kernel_matrix, rbf, median_distance
+from kernels import kernel_matrix, rbf, median_distance, poly
 from kpca_cv import kpca_cv
 
 # Built-in modules
@@ -26,7 +26,7 @@ rcParams['xtick.labelsize'] = 12
 rcParams['ytick.labelsize'] = 12
 
 
-def main(dataset='segmentation'):
+def main(dataset='magic'):
     """
     Run experiments for determining the number of principal components to
     retain in kernel PCA through cross-validation.
@@ -36,7 +36,7 @@ def main(dataset='segmentation'):
     Parameters
     ----------
     dataset : str
-        Either 'magic' or 'yeast'
+        Either 'magic', 'yeast', 'cardiotocography' or 'segmentation'
 
     """
 
@@ -45,17 +45,19 @@ def main(dataset='segmentation'):
 
     X = getattr(data, "get_" + dataset + "_data")()
 
-    kernel = lambda x, y: rbf(x, y, sigma)
+    for datasize, n_iter in zip((10, 50, 100), (10, 50, 90)):
 
-    for datasize in (10, 50, 100):
         X_i = X[:datasize]
+
         sigma = median_distance(X_i)
-        kpca_cv_experiment(X_i, kernel, dataset)
+        kernel = lambda x, y: rbf(x, y, sigma)
+        kpca_cv_experiment(X_i, kernel, dataset, n_iter, "rbf")
+
+        kpca_cv_experiment(X_i, poly, dataset, n_iter, "polynomial")
 
 
-def kpca_cv_experiment(X, kernel, dataset):
+def kpca_cv_experiment(X, kernel, dataset, n_iter, kernel_label):
     """
-
     """
 
     print("\nCross-validation of kernel PCA\n------------------------------")
@@ -64,13 +66,15 @@ def kpca_cv_experiment(X, kernel, dataset):
     n = K.shape[0]
 
     print("Number of data points: {}".format(n))
+    print("Kernel: {}".format(kernel_label))
 
-    pc, errs = kpca_cv(K)
+    pc, errs = kpca_cv(K, n_iter)
 
     print("Selected PC: {}".format(pc))
 
     err_mean = errs.mean(0)
-    plotting(np.arange(n)+1, err_mean, dataset, "k", "Mean error")
+    title = dataset + " " + kernel_label
+    plotting(np.arange(n_iter)+1, err_mean, title, "k", "Mean error")
 
 
 def plotting(x, y, title, xlabel, ylabel):
